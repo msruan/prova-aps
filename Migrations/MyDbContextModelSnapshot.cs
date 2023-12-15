@@ -108,6 +108,8 @@ namespace estoque.Migrations
 
                     b.HasIndex("ClienteId");
 
+                    b.HasIndex("TipoDePagamentoId");
+
                     b.HasIndex("TransportadoraId");
 
                     b.HasIndex("VendedorId");
@@ -168,6 +170,29 @@ namespace estoque.Migrations
                     b.ToTable("Produto");
                 });
 
+            modelBuilder.Entity("estoque.Models.TipoDePagamento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("InformacoesAdicionais")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("NomeDoCobrado")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TipoDePagamento");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("TipoDePagamento");
+                });
+
             modelBuilder.Entity("estoque.Models.Transportadora", b =>
                 {
                     b.Property<int>("Id")
@@ -194,6 +219,35 @@ namespace estoque.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Vendedor");
+                });
+
+            modelBuilder.Entity("estoque.Models.PagamentoComCartao", b =>
+                {
+                    b.HasBaseType("estoque.Models.TipoDePagamento");
+
+                    b.Property<string>("Bandeira")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("NumeroDoCartao")
+                        .HasColumnType("longtext");
+
+                    b.HasDiscriminator().HasValue("PagamentoComCartao");
+                });
+
+            modelBuilder.Entity("estoque.Models.PagamentoComCheque", b =>
+                {
+                    b.HasBaseType("estoque.Models.TipoDePagamento");
+
+                    b.Property<int>("Banco")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NomeDoBanco")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("NumeroDoCheque")
+                        .HasColumnType("longtext");
+
+                    b.HasDiscriminator().HasValue("PagamentoComCheque");
                 });
 
             modelBuilder.Entity("estoque.Models.Item", b =>
@@ -223,6 +277,12 @@ namespace estoque.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("estoque.Models.TipoDePagamento", "TipoDePagamento")
+                        .WithMany("NotasDeVenda")
+                        .HasForeignKey("TipoDePagamentoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("estoque.Models.Transportadora", "Transportadora")
                         .WithMany("NotasDeVenda")
                         .HasForeignKey("TransportadoraId");
@@ -234,6 +294,8 @@ namespace estoque.Migrations
                         .IsRequired();
 
                     b.Navigation("Cliente");
+
+                    b.Navigation("TipoDePagamento");
 
                     b.Navigation("Transportadora");
 
@@ -282,6 +344,11 @@ namespace estoque.Migrations
             modelBuilder.Entity("estoque.Models.Produto", b =>
                 {
                     b.Navigation("Itens");
+                });
+
+            modelBuilder.Entity("estoque.Models.TipoDePagamento", b =>
+                {
+                    b.Navigation("NotasDeVenda");
                 });
 
             modelBuilder.Entity("estoque.Models.Transportadora", b =>

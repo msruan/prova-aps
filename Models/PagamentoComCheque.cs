@@ -6,7 +6,7 @@ namespace estoque.Models {
     public class PagamentoComCheque : TipoDePagamento
 {
     public int Banco { get; set; }
-    [Key]
+    //[Key]
     public string? NumeroDoCheque { get; set; }
     public string? NomeDoBanco {get; set;}
 }

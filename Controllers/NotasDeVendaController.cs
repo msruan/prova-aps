@@ -22,7 +22,7 @@ namespace estoque.Controllers
         // GET: NotasDeVenda
         public async Task<IActionResult> Index()
         {
-            var myDbContext = _context.NotaDeVenda.Include(n => n.Cliente).Include(n => n.Transportadora).Include(n => n.Vendedor);
+            var myDbContext = _context.NotaDeVenda.Include(n => n.Cliente).Include(n => n.TipoDePagamento).Include(n => n.Transportadora).Include(n => n.Vendedor);
             return View(await myDbContext.ToListAsync());
         }
 
@@ -36,6 +36,7 @@ namespace estoque.Controllers
 
             var notaDeVenda = await _context.NotaDeVenda
                 .Include(n => n.Cliente)
+                .Include(n => n.TipoDePagamento)
                 .Include(n => n.Transportadora)
                 .Include(n => n.Vendedor)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -51,6 +52,7 @@ namespace estoque.Controllers
         public IActionResult Create()
         {
             ViewData["ClienteId"] = new SelectList(_context.Cliente, "Id", "Id");
+            ViewData["TipoDePagamentoId"] = new SelectList(_context.TipoDePagamento, "Id", "Discriminator");
             ViewData["TransportadoraId"] = new SelectList(_context.Transportadora, "Id", "Id");
             ViewData["VendedorId"] = new SelectList(_context.Vendedor, "Id", "Id");
             return View();
@@ -70,6 +72,7 @@ namespace estoque.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ClienteId"] = new SelectList(_context.Cliente, "Id", "Id", notaDeVenda.ClienteId);
+            ViewData["TipoDePagamentoId"] = new SelectList(_context.TipoDePagamento, "Id", "Discriminator", notaDeVenda.TipoDePagamentoId);
             ViewData["TransportadoraId"] = new SelectList(_context.Transportadora, "Id", "Id", notaDeVenda.TransportadoraId);
             ViewData["VendedorId"] = new SelectList(_context.Vendedor, "Id", "Id", notaDeVenda.VendedorId);
             return View(notaDeVenda);
@@ -89,6 +92,7 @@ namespace estoque.Controllers
                 return NotFound();
             }
             ViewData["ClienteId"] = new SelectList(_context.Cliente, "Id", "Id", notaDeVenda.ClienteId);
+            ViewData["TipoDePagamentoId"] = new SelectList(_context.TipoDePagamento, "Id", "Discriminator", notaDeVenda.TipoDePagamentoId);
             ViewData["TransportadoraId"] = new SelectList(_context.Transportadora, "Id", "Id", notaDeVenda.TransportadoraId);
             ViewData["VendedorId"] = new SelectList(_context.Vendedor, "Id", "Id", notaDeVenda.VendedorId);
             return View(notaDeVenda);
@@ -127,6 +131,7 @@ namespace estoque.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ClienteId"] = new SelectList(_context.Cliente, "Id", "Id", notaDeVenda.ClienteId);
+            ViewData["TipoDePagamentoId"] = new SelectList(_context.TipoDePagamento, "Id", "Discriminator", notaDeVenda.TipoDePagamentoId);
             ViewData["TransportadoraId"] = new SelectList(_context.Transportadora, "Id", "Id", notaDeVenda.TransportadoraId);
             ViewData["VendedorId"] = new SelectList(_context.Vendedor, "Id", "Id", notaDeVenda.VendedorId);
             return View(notaDeVenda);
@@ -142,6 +147,7 @@ namespace estoque.Controllers
 
             var notaDeVenda = await _context.NotaDeVenda
                 .Include(n => n.Cliente)
+                .Include(n => n.TipoDePagamento)
                 .Include(n => n.Transportadora)
                 .Include(n => n.Vendedor)
                 .FirstOrDefaultAsync(m => m.Id == id);
